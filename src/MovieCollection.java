@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.*;
 
 public class MovieCollection
 {
@@ -164,26 +165,87 @@ public class MovieCollection
         System.out.println("Box office revenue: " + movie.getRevenue());
     }
 
-    private void searchCast()
-    {
+
+
+    private void searchCast() {
+        ArrayList<String> newList = new ArrayList<String>();
         System.out.println("Enter a keyword search term here:");
         String searchTerm = scanner.nextLine();
         searchTerm = searchTerm.toLowerCase();
         ArrayList<String> cast = new ArrayList<String>();
-        for (int i=0; i<movies.size(); i++){
-            String[] cast1=movies.get(i).getCast().split("\\|");
-            for (int b=0; i< cast1.length; i++){
-                boolean order= false;
-                for(int e=0; e< cast.size(); e++){
-                    if (cast.get(e).equalsIgnoreCase(cast1[b])){
-                        order= true;
-                    }
+        for (int i = 0; i < movies.size(); i++) {
+            String[] cast1 = movies.get(i).getCast().split("\\|");
+
+            for (int b = 0; b < cast1.length; b++) {
+
+                if (cast1[b].toLowerCase().indexOf(searchTerm) != -1) {
+                    cast.add(cast1[b]);
                 }
 
             }
+
+            for(String name : cast){
+                if(!newList.contains(name)){
+                    newList.add(name);
+                }
+            }
+
+        }
+        Collections.sort(newList);
+        for (int i = 0; i < newList.size(); i++)
+        {
+            String title =  newList.get(i);
+            int choiceNum = i + 1;
+
+            System.out.println("" + choiceNum + ". " + title);
+        }
+        System.out.println("Which actor would you like to learn more about?");
+        System.out.print("Enter number: ");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        int Check= 0;
+        System.out.println("You chose actor:"+ newList.get(choice-1));
+        ArrayList<Movie> movie= new ArrayList<Movie>();
+        for (int i = 0; i < movies.size(); i++) {
+
+            if (movies.get(i).getCast().contains(newList.get(choice-1))){
+                movie.add(movies.get(i));
+            }
+
+        }
+        int add=0;
+
+        for (int i = 0; i <movie.size(); i++) {
+            add++;
+            System.out.println(""+ add+ ". "+ movie.get(i).getTitle());
+        }
+        System.out.println("Which movie would you like to learn more about?");
+        System.out.print("Enter number: ");
+
+        int ken = scanner.nextInt();
+        scanner.nextLine();
+
+        Movie selectedMovie = movie.get(ken - 1);
+
+        displayMovieInfo(selectedMovie);
+
+        System.out.println("\n ** Press Enter to Return to Main Menu **");
+        scanner.nextLine();
+
+
         }
 
-    }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -222,16 +284,255 @@ public class MovieCollection
 
     private void listGenres()
     {
+        ArrayList<String> newList = new ArrayList<String>();
+        ArrayList<String> cast = new ArrayList<String>();
+        String s="";
 
-    }
+        for (int i = 0; i < movies.size(); i++) {
+          String[] cast1 = movies.get(i).getGenres().split("\\|");
 
-    private void listHighestRated()
-    {
+            for (int b = 0; b < cast1.length; b++) {
+                    cast.add(cast1[b]);
 
-    }
+            }
+
+            for(String name : cast){
+                if(!newList.contains(name)){
+                    newList.add(name);
+                }
+            }
+
+
+        }
+
+        int Check= 0;
+        ArrayList<Movie> movie= new ArrayList<Movie>();
+        Collections.sort(newList);
+        for (int b = 0; b < newList.size(); b++) {
+            Check++;
+            System.out.println(""+ Check+ ". "+newList.get(b));
+        }
+            System.out.println("Which genre would you like to learn more about?");
+            System.out.print("Enter number: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+        for (int i = 0; i < movies.size(); i++) {
+
+            if (movies.get(i).getGenres().contains(newList.get(choice-1))){
+                movie.add(movies.get(i));
+            }
+
+        }
+        int add=0;
+
+        for (int i = 0; i <movie.size(); i++) {
+        add++;
+            System.out.println(""+ add+ ". "+ movie.get(i).getTitle());
+            }
+        System.out.println("Which movie would you like to learn more about? ");
+        System.out.print("Enter number: ");
+
+        int ken = scanner.nextInt();
+        scanner.nextLine();
+
+        Movie selectedMovie = movie.get(ken - 1);
+
+        displayMovieInfo(selectedMovie);
+
+        System.out.println("\n ** Press Enter to Return to Main Menu **");
+        scanner.nextLine();
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+    private void listHighestRated() {
+        ArrayList<Double> rate = new ArrayList<Double>();
+        ArrayList<String> name = new ArrayList<String>();
+        Double[] dblArray = new Double[rate.size()];
+        String[] movie = new String[name.size()];
+        for (int i = 0; i < movies.size(); i++) {
+            rate.add(movies.get(i).getUserRating());
+            name.add(movies.get(i).getTitle());
+        }
+
+
+                dblArray = rate.toArray(dblArray);
+                movie = name.toArray(movie);
+
+        ArrayList<Movie> spread = new ArrayList<Movie>();
+        for (int k = 0; k < movies.size(); k++) {
+
+            if (movies.get(k).getUserRating() == (dblArray[k])) {
+                spread.add(movies.get(k));
+
+
+            }
+
+        }
+
+
+        int n = dblArray.length;
+
+        // One by one move boundary of unsorted subarray
+        for (int i = 0; i < n - 1; i++) {
+            // Find the minimum element in unsorted array
+            int min_idx = i;
+            for (int j = i + 1; j < n; j++)
+                if (spread.get(j).getUserRating() < spread.get(min_idx).getUserRating())
+                    min_idx = j;
+
+            // Swap the found minimum element with the first
+            // element
+            Movie temp =spread.get(min_idx);
+            spread.set(min_idx,spread.get(i));
+            spread.set(i,temp);
+
+
+        }
+        ArrayList<Movie> best = new ArrayList<Movie>();
+        for (int i = spread.size() - 1; i >= 0; i--) {
+
+            // Append the elements in reverse order
+            best.add( spread.get(i));
+        }
+
+
+        ArrayList<String> order = new ArrayList<String>();
+
+        Movie sem= movies.get(0);;
+
+
+        int add=0;
+       // System.out.println(spread);
+
+
+        for (int i = 0; i <50; i++) {
+            add++;
+
+            System.out.println(""+ add+ "  Title  "+ best.get(i).getTitle()+ "\nUser Rating: "+ best.get(i).getUserRating());
+
+        }
+        System.out.println("Which movie would you like to learn more about?");
+        System.out.print("Enter number: ");
+
+        int ken = scanner.nextInt();
+        scanner.nextLine();
+
+        Movie selectedMovie = best.get(ken - 1);
+
+        displayMovieInfo(selectedMovie);
+
+        System.out.println("\n ** Press Enter to Return to Main Menu **");
+        scanner.nextLine();
+
+
+
+
+
+
+
+
+
+        }
 
     private void listHighestRevenue()
     {
+        ArrayList<Integer> rate = new ArrayList<Integer>();
+        ArrayList<String> name = new ArrayList<String>();
+        Integer[] dblArray = new Integer[rate.size()];
+        String[] movie = new String[name.size()];
+        for (int i = 0; i < movies.size(); i++) {
+            rate.add(movies.get(i).getRevenue());
+            name.add(movies.get(i).getTitle());
+        }
+
+
+        dblArray = rate.toArray(dblArray);
+        movie = name.toArray(movie);
+
+        ArrayList<Movie> spread = new ArrayList<Movie>();
+        for (int k = 0; k < movies.size(); k++) {
+
+            if (movies.get(k).getRevenue() == (dblArray[k])) {
+                spread.add(movies.get(k));
+
+
+            }
+
+        }
+
+
+        int n = dblArray.length;
+
+        // One by one move boundary of unsorted subarray
+        for (int i = 0; i < n - 1; i++) {
+            // Find the minimum element in unsorted array
+            int min_idx = i;
+            for (int j = i + 1; j < n; j++)
+                if (spread.get(j).getRevenue() < spread.get(min_idx).getRevenue())
+                    min_idx = j;
+
+            // Swap the found minimum element with the first
+            // element
+            Movie temp =spread.get(min_idx);
+            spread.set(min_idx,spread.get(i));
+            spread.set(i,temp);
+
+
+        }
+        ArrayList<Movie> best = new ArrayList<Movie>();
+        for (int i = spread.size() - 1; i >= 0; i--) {
+
+            // Append the elements in reverse order
+            best.add( spread.get(i));
+        }
+
+
+        ArrayList<String> order = new ArrayList<String>();
+
+        Movie sem= movies.get(0);;
+
+
+        int add=0;
+        // System.out.println(spread);
+
+
+        for (int i = 0; i <50; i++) {
+            add++;
+
+            System.out.println(""+ add+ "  Title  "+ best.get(i).getTitle()+ "\nRevenue:  "+ best.get(i).getRevenue());
+
+        }
+        System.out.println("Which movie would you like to learn more about?");
+        System.out.print("Enter number: ");
+
+        int ken = scanner.nextInt();
+        scanner.nextLine();
+
+        Movie selectedMovie = best.get(ken - 1);
+
+        displayMovieInfo(selectedMovie);
+
+        System.out.println("\n ** Press Enter to Return to Main Menu **");
+        scanner.nextLine();
+
+
+
+
+
+
+
 
     }
 
